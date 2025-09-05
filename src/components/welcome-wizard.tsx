@@ -6,8 +6,9 @@ import ProgressIndicator from "./ProgressIndicator";
 import { StepNavigation } from "./StepNavigation";
 import { PersonalInfoForm } from "./forms/PersonalInfoForm";
 import { PreferencesForm } from "./forms/PreferencesForm";
-import { PreferencesData, ProfileSetupData, WizardFormData, type PersonalInfoData } from "@/lib/validation";
+import { ReviewForm } from "./forms/ReviewForm";
 import { ProfileSetupForm } from "./forms/ProfileSetupForm";
+import { PreferencesData, ProfileSetupData, WizardFormData, type PersonalInfoData } from "@/lib/validation";
 
 const steps = [
 	{ id: 1, title: "Personal Info", description: "Tell us about yourself" },
@@ -17,6 +18,9 @@ const steps = [
 ];
 
 export function WelcomeWizard() {
+	// Estado para rastrear si el asistente está completo
+	const [isCompleted, setIsCompleted] = useState(false);
+	// Estado para rastrear el paso actual
 	const [currentStep, setCurrentStep] = useState(1);
 	// Estado para almacenar los datos del formulario
 	const [formData, setFormData] = useState<Partial<WizardFormData>>({});
@@ -44,6 +48,17 @@ export function WelcomeWizard() {
 		setCurrentStep((prev) => Math.min(prev + 1, steps.length));
 	};
 
+	// Funcion para manejar el envío del formulario del paso 4 (Revisión)
+	const handleFinalSubmit = () => {
+		console.log("🎉 Final submission complete!", formData);
+		setIsCompleted(true);
+	};
+
+	// Función para editar un paso específico desde Review
+	const handleEditStep = (step: number) => {
+		setCurrentStep(step);
+	};
+
 	// Renderizar el contenido del paso actual
 	const renderStepContent = () => {
 		switch (currentStep) {
@@ -54,11 +69,14 @@ export function WelcomeWizard() {
 			case 3:
 				return <ProfileSetupForm onSubmit={handleProfileSetupSubmit} defaultValues={formData} />;
 			case 4:
-				return <div className="text-center py-20">Review Form Coming Soon...</div>;
+				return <ReviewForm formData={formData} onSubmit={handleFinalSubmit} onEdit={handleEditStep} />;
 			default:
 				return <div>Step not found</div>;
 		}
 	};
+
+	// No mostrar navegación si está completado o en el paso de review
+	const showNavigation = !isCompleted && currentStep !== 4;
 
 	return (
 		<Card className="shadow-xl border-0 bg-zinc-100">
@@ -73,12 +91,15 @@ export function WelcomeWizard() {
 				{/* Contenido dinámico del paso actual */}
 				<div className="min-h-[500px]">{renderStepContent()}</div>
 
-				<StepNavigation
-					currentStep={currentStep}
-					totalSteps={steps.length}
-					onNext={() => setCurrentStep((prev) => Math.min(prev + 1, steps.length))}
-					onPrevious={() => setCurrentStep((prev) => Math.max(prev - 1, 1))}
-				/>
+				{/* Mostrar navegación solo cuando sea necesario */}
+				{showNavigation && (
+					<StepNavigation
+						currentStep={currentStep}
+						totalSteps={steps.length}
+						onNext={() => setCurrentStep((prev) => Math.min(prev + 1, steps.length))}
+						onPrevious={() => setCurrentStep((prev) => Math.max(prev - 1, 1))}
+					/>
+				)}
 			</CardContent>
 		</Card>
 	);
