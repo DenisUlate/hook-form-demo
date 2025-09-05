@@ -33,9 +33,29 @@ export const preferencesSchema = z.object({
 	timezone: z.string().min(1, "Please select your timezone"),
 });
 
+// Esquema para el Step 3 - Profile Setup
+export const profileSetupSchema = z.object({
+	displayName: z
+		.string()
+		.min(2, "Display name must be at least 2 characters")
+		.max(30, "Display name must be less than 30 characters"),
+	bio: z.string().max(500, "Bio must be less than 500 characters").optional(),
+	website: z.string().url("Please enter a valid website URL").optional().or(z.literal("")),
+	socialMedia: z.object({
+		twitter: z.string().optional(),
+		linkedin: z.string().optional(),
+		github: z.string().optional(),
+	}),
+	profileVisibility: z.enum(["public", "private", "friends"], {
+		required_error: "Please select profile visibility",
+	}),
+	avatar: z.string().optional(), // Para almacenar URL o base64 de la imagen
+});
+
 // Tipo TypeScript derivado del esquema
 export type PersonalInfoData = z.infer<typeof personalInfoSchema>;
 export type PreferencesData = z.infer<typeof preferencesSchema>;
+export type ProfileSetupData = z.infer<typeof profileSetupSchema>;
 
 // Esquema combinado para todos los pasos
-export type WizardFormData = PersonalInfoData & PreferencesData;
+export type WizardFormData = PersonalInfoData & PreferencesData & ProfileSetupData;

@@ -6,7 +6,8 @@ import ProgressIndicator from "./ProgressIndicator";
 import { StepNavigation } from "./StepNavigation";
 import { PersonalInfoForm } from "./forms/PersonalInfoForm";
 import { PreferencesForm } from "./forms/PreferencesForm";
-import { PreferencesData, WizardFormData, type PersonalInfoData } from "@/lib/validation";
+import { PreferencesData, ProfileSetupData, WizardFormData, type PersonalInfoData } from "@/lib/validation";
+import { ProfileSetupForm } from "./forms/ProfileSetupForm";
 
 const steps = [
 	{ id: 1, title: "Personal Info", description: "Tell us about yourself" },
@@ -35,6 +36,14 @@ export function WelcomeWizard() {
 		setCurrentStep((prev) => Math.min(prev + 1, steps.length));
 	};
 
+	// Función para manejar el envío del formulario del paso 3
+	const handleProfileSetupSubmit = (data: ProfileSetupData) => {
+		setFormData((prev) => ({ ...prev, ...data }));
+		console.log("Profile Setup Data:", data);
+		console.log("Combined Data:", { ...formData, ...data });
+		setCurrentStep((prev) => Math.min(prev + 1, steps.length));
+	};
+
 	// Renderizar el contenido del paso actual
 	const renderStepContent = () => {
 		switch (currentStep) {
@@ -43,7 +52,7 @@ export function WelcomeWizard() {
 			case 2:
 				return <PreferencesForm onSubmit={handlePreferencesSubmit} defaultValues={formData} />;
 			case 3:
-				return <div className="text-center py-20">Profile Setup Form Coming Soon...</div>;
+				return <ProfileSetupForm onSubmit={handleProfileSetupSubmit} defaultValues={formData} />;
 			case 4:
 				return <div className="text-center py-20">Review Form Coming Soon...</div>;
 			default:
