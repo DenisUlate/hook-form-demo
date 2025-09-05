@@ -5,8 +5,8 @@ import { Card, CardContent, CardHeader } from "./ui/card";
 import ProgressIndicator from "./ProgressIndicator";
 import { StepNavigation } from "./StepNavigation";
 import { PersonalInfoForm } from "./forms/PersonalInfoForm";
-import { PreferencesForm } from "./PreferencesForm";
-import { PreferencesData, type PersonalInfoData } from "@/lib/validation";
+import { PreferencesForm } from "./forms/PreferencesForm";
+import { PreferencesData, WizardFormData, type PersonalInfoData } from "@/lib/validation";
 
 const steps = [
 	{ id: 1, title: "Personal Info", description: "Tell us about yourself" },
@@ -18,7 +18,7 @@ const steps = [
 export function WelcomeWizard() {
 	const [currentStep, setCurrentStep] = useState(1);
 	// Estado para almacenar los datos del formulario
-	const [formData, setFormData] = useState<Partial<PersonalInfoData>>({});
+	const [formData, setFormData] = useState<Partial<WizardFormData>>({});
 
 	// Función para manejar el envío del formulario del paso 1
 	const handlePersonalInfoSubmit = (data: PersonalInfoData) => {
