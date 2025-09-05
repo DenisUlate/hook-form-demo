@@ -5,7 +5,8 @@ import { Card, CardContent, CardHeader } from "./ui/card";
 import ProgressIndicator from "./ProgressIndicator";
 import { StepNavigation } from "./StepNavigation";
 import { PersonalInfoForm } from "./forms/PersonalInfoForm";
-import { type PersonalInfoData } from "@/lib/validation";
+import { PreferencesForm } from "./PreferencesForm";
+import { PreferencesData, type PersonalInfoData } from "@/lib/validation";
 
 const steps = [
 	{ id: 1, title: "Personal Info", description: "Tell us about yourself" },
@@ -26,13 +27,21 @@ export function WelcomeWizard() {
 		setCurrentStep((prev) => Math.min(prev + 1, steps.length));
 	};
 
+	// Función para manejar el envío del formulario del paso 2
+	const handlePreferencesSubmit = (data: PreferencesData) => {
+		setFormData((prev) => ({ ...prev, ...data }));
+		console.log("Preferences Data:", data); // Para debug
+		console.log("Combined Data:", { ...formData, ...data });
+		setCurrentStep((prev) => Math.min(prev + 1, steps.length));
+	};
+
 	// Renderizar el contenido del paso actual
 	const renderStepContent = () => {
 		switch (currentStep) {
 			case 1:
 				return <PersonalInfoForm onSubmit={handlePersonalInfoSubmit} defaultValues={formData} />;
 			case 2:
-				return <div className="text-center py-20">Preferences Form Coming Soon...</div>;
+				return <PreferencesForm onSubmit={handlePreferencesSubmit} defaultValues={formData} />;
 			case 3:
 				return <div className="text-center py-20">Profile Setup Form Coming Soon...</div>;
 			case 4:
@@ -53,7 +62,7 @@ export function WelcomeWizard() {
 
 			<CardContent className="pt-6">
 				{/* Contenido dinámico del paso actual */}
-				<div className="min-h-[500px">{renderStepContent()}</div>
+				<div className="min-h-[500px]">{renderStepContent()}</div>
 
 				<StepNavigation
 					currentStep={currentStep}
